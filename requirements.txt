@@ -6,5 +6,4 @@ langchain-sambanova
 langchain-core
 markdown
 starlette
-imageio[ffmpeg]
-ffmpeg
+assemblyai
