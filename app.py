@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 import shutil
-import whisper
+import assemblyai as aai
 from dotenv import load_dotenv
 from langchain_sambanova import ChatSambaNovaCloud
 from langchain.prompts import ChatPromptTemplate
@@ -9,10 +9,8 @@ import markdown
 
 # Load environment variables
 load_dotenv()
-os.environ["SAMBANOVA_API_KEY"] = st.secrets["SAMBANOVA_API_KEY"]
-
-# Load Whisper model
-whisper_model = whisper.load_model("base")
+os.environ["SAMBANOVA_API_KEY"] = st.secrets("SAMBANOVA_API_KEY")
+aai.settings.api_key = st.secrets("ASSEMBLYAI_API_KEY")  # Load AssemblyAI API key
 
 # Initialize SambaNova LLM
 llm = ChatSambaNovaCloud(
@@ -83,10 +81,18 @@ if uploaded_file:
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(uploaded_file, buffer)
 
-    # Transcribe the audio using Whisper
+    # Transcribe the audio using AssemblyAI
     with st.spinner("Transcribing audio..."):
-        transcription = whisper_model.transcribe(file_path)["text"]
-    
+        transcriber = aai.Transcriber()
+        config = aai.TranscriptionConfig(speaker_labels=True)  # Optional: Enable speaker labels
+        transcript = transcriber.transcribe(file_path, config)
+
+        if transcript.status == aai.TranscriptStatus.error:
+            st.error(f"Transcription failed: {transcript.error}")
+            st.stop()
+
+        transcription = transcript.text
+
     # Generate structured report using SambaNova LLM
     with st.spinner("Generating medical report..."):
         prompt = medical_report_prompt.format(transcription=transcription)
