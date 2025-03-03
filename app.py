@@ -9,7 +9,7 @@ import markdown
 
 # Load environment variables
 load_dotenv()
-os.environ["SAMBANOVA_API_KEY"] = os.getenv("SAMBANOVA_API_KEY")
+os.environ["SAMBANOVA_API_KEY"] = st.secrets["SAMBANOVA_API_KEY"]
 
 # Load Whisper model
 whisper_model = whisper.load_model("base")
