@@ -9,8 +9,8 @@ import markdown
 
 # Load environment variables
 load_dotenv()
-os.environ["SAMBANOVA_API_KEY"] = st.secrets("SAMBANOVA_API_KEY")
-aai.settings.api_key = st.secrets("ASSEMBLYAI_API_KEY")  # Load AssemblyAI API key
+os.environ["SAMBANOVA_API_KEY"] = st.secrets["SAMBANOVA_API_KEY"]
+aai.settings.api_key = st.secrets["ASSEMBLYAI_API_KEY"]  # Load AssemblyAI API key
 
 # Initialize SambaNova LLM
 llm = ChatSambaNovaCloud(
